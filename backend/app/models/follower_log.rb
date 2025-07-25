@@ -1,0 +1,2 @@
+class FollowerLog < ApplicationRecord
+end

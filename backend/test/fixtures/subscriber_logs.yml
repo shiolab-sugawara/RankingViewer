@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  subscriber_count: 1
+  recorded_at: 2025-06-27 07:11:16
+
+two:
+  user: two
+  subscriber_count: 1
+  recorded_at: 2025-06-27 07:11:16

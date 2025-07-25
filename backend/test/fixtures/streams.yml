@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  started_at: 2025-06-27 07:11:06
+  ended_at: 2025-06-27 07:11:06
+  game_name: MyString
+  viewer_peak: 1
+
+two:
+  user: two
+  started_at: 2025-06-27 07:11:06
+  ended_at: 2025-06-27 07:11:06
+  game_name: MyString
+  viewer_peak: 1

@@ -1,0 +1,2 @@
+class SubscriberLog < ApplicationRecord
+end
