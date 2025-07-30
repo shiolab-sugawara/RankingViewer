@@ -1,20 +1,19 @@
-# ベースイメージ
-FROM node:20-alpine
+FROM node:22.4.0-slim AS build
 
-# 作業ディレクトリを作成
 WORKDIR /app
 
-# package.jsonとlockファイルをコピーして依存解決
 COPY package*.json ./
 
-# 依存関係をインストール
 RUN npm install
 
-# 残りのファイルをすべてコピー
 COPY . .
 
-# ポートを公開（Viteのデフォルト5173）
-EXPOSE 5173
+RUN npm run build
 
-# 開発サーバを起動
-CMD ["npm", "run", "dev", "--", "--host"]
+FROM nginx:stable-alpine AS production
+
+COPY --from=build /app/build/client /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

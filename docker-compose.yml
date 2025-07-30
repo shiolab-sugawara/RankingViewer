@@ -3,37 +3,44 @@ services:
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: password
-    ports:
-      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    restart: always
+
   back:
     build:
       context: ./backend
       dockerfile: Dockerfile
     env_file:
-      - ./backend/.env.local
-    command: ["rails", "server", "-b", "0.0.0.0", "-p", "3000"]
-    volumes:
-      - ./backend:/app
-    ports:
-      - "3000:3000"
+      - ./backend/.env.production
+    command: ["bundle", "exec", "puma", "-C", "config/puma.rb"]
     depends_on:
       - db
-    tty: true
-    stdin_open: true
-  front:
+    expose:
+      - "3000"
+    restart: always
+
+  # front サービスは「ビルド用」として使い切ったら不要
+  # 本番では nginx が dist を含むイメージを持つべきなので削除
+  # front:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   depends_on:
+  #     - back
+  #   restart: no
+
+  nginx:
     build:
-      context: ./frontend
+      context: ./frontend  # frontend の Dockerfile で nginx 化済みイメージにする
       dockerfile: Dockerfile
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
     ports:
-      - "8000:5173"
-    environment:
-      - NODE_ENV=development
-      - CHOKIDAR_USEPOLLING=true
-    command: npm run dev -- --host
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - back
+    restart: always
+
 volumes:
   mysql_data:

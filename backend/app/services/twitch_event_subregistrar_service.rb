@@ -1,4 +1,4 @@
-class TwitchEventSubRegistrar
+class TwitchEventSubregistrarService
   def initialize
     @api = TwitchAPIService.new
   end

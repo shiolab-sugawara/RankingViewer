@@ -1,20 +1,29 @@
-FROM ruby:3.2.2
-RUN apt-get update -qq && apt-get install -y nodejs default-mysql-client cron
+FROM ruby:3.2.3-slim
+
+RUN apt-get update -qq && \
+    apt-get install -y --no-install-recommends \
+    nodejs \
+    default-mysql-client \
+    libmariadb-dev-compat \
+    build-essential \
+    libpq-dev \
+    libxml2-dev \
+    libxslt1-dev \
+    git \
+    curl \
+    cron && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV RAILS_ENV=production
 
 WORKDIR /app
 
-COPY Gemfile /app/Gemfile
-COPY Gemfile.lock /app/Gemfile.lock
+COPY Gemfile Gemfile.lock ./
+RUN gem install bundler && \
+    bundle config set without 'development test' && \
+    bundle install
 
-RUN gem install bundler
-RUN bundle install
+COPY . .
 
-COPY . /app
-
-COPY entrypoint.sh /usr/bin/
-RUN chmod +x /usr/bin/entrypoint.sh
-ENTRYPOINT ["entrypoint.sh"]
-
-EXPOSE 3002
-
-CMD ["rails", "server", "-b", "0.0.0.0"]
+EXPOSE 3000
+CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]

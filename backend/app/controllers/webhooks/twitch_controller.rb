@@ -1,5 +1,4 @@
 class Webhooks::TwitchController < ApplicationController
-  skip_before_action :verify_authenticity_token
 
   def create
     event_type = request.headers['Twitch-Eventsub-Message-Type']
