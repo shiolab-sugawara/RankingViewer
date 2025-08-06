@@ -9,6 +9,8 @@ type StreamRanking = {
   tags: string[];
 };
 
+export const clientLoader = () => null;
+
 export default function RankingRoute() {
   const [daysAgo, setDaysAgo] = useState(0);
   const [ranking, setRanking] = useState<StreamRanking[]>([]);
