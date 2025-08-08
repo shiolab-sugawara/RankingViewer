@@ -1,12 +1,9 @@
-set :output, "/app/log/cron.log"
+set :environment, ENV['RAILS_ENV'] || 'production'
+set :path, '/app'
+set :output, { standard: "/proc/1/fd/1", error: "/proc/1/fd/2" }
 
-#配信者の情報を視聴者順に保存 今はまだ実行しない
-#every 5.minutes do
-#  rake "stream_histories:save"
-#  rake "stream_snapshot:save"
-#end
+ENV.each { |k, v| env(k, v) }
 
-#一日の終わりにsnapshotモデルに上位２０人の情報を持ってくる
-#every 1.day, at: '23:59' do
-#  rake "stream_histories:save"
-#end
+every 5.minutes do
+  rake "stream_snapshots:save"
+end

@@ -9,7 +9,7 @@ class TwitchApiService
   def fetch_top_streams_with_streamer
     query = {
       language: "ja",
-      first: "20"
+      first: "21"
     }
 
     response = self.class.get("/streams", query: query).parsed_response
@@ -20,7 +20,9 @@ class TwitchApiService
         {
           user: stream["user_name"],
           viewers: stream["viewer_count"],
-          thumbnail: stream["thumbnail_url"].gsub("{width}", "320").gsub("{height}", "180")
+          thumbnail: stream["thumbnail_url"].gsub("{width}", "320").gsub("{height}", "180"),
+          started_at: stream[:started_at],
+          tags: stream[:tags]
         }
       end
     }

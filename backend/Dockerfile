@@ -25,5 +25,7 @@ RUN gem install bundler && \
 
 COPY . .
 
+RUN chmod +x /app/entrypoint.sh
+
 EXPOSE 3000
-CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
+ENTRYPOINT ["/bin/bash", "-lc", "/app/entrypoint.sh"]

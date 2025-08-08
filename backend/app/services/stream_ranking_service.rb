@@ -11,7 +11,7 @@ class StreamRankingService
 
     streams
       .order(viewer_count: :desc)
-      .limit(100)
+      .limit(21)
       .map do |s|
         {
           user: s.user_name,
