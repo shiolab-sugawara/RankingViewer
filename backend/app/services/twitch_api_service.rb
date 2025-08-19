@@ -21,8 +21,8 @@ class TwitchApiService
           user: stream["user_name"],
           viewers: stream["viewer_count"],
           thumbnail: stream["thumbnail_url"].gsub("{width}", "320").gsub("{height}", "180"),
-          started_at: stream[:started_at],
-          tags: stream[:tags]
+          started_at: stream["started_at"],
+          tags: stream["tags"]
         }
       end
     }
