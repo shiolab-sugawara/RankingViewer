@@ -43,7 +43,7 @@ export default function AnalyticsPage() {
   }, []);
 
   if (error) return <p>エラー: {error}</p>;
-  if (!followers.length && !subs.length && !vods.length) return <p>読み込み中...</p>;
+  if (!followers.length) return <p>読み込み中...</p>;
 
   return (
     <div>

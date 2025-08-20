@@ -47,17 +47,17 @@ class TwitchApiService
 
 
   def fetch_streamer
-    response = get("/users", query: { id: twitch_id })
+    response = self.class.get("/users", query: { id: twitch_id })
     response.parsed_response["data"]&.first
   end
 
   def fetch_follower_count(user_id)
-    response = get("/channels/followers", query: { broadcaster_id: user_id })
+    response = self.class.get("/channels/followers", query: { broadcaster_id: user_id })
     response.parsed_response["total"].to_i
   end
 
   def fetch_latest_vod(user_id)
-    response = get("/videos?user_id=#{user_id}&first=1&type=archive")
+    response = self.class.get("/videos?user_id=#{user_id}&first=1&type=archive")
     video = response.parsed_response["data"]&.first
     return nil unless video
 

@@ -9,5 +9,5 @@ every 5.minutes do
 end
 
 every 1.day, at: '23:59' do
-  rake "analayz:fetch_followers"
+  rake "analyze:fetch_followers"
 end
