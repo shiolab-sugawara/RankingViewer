@@ -7,3 +7,7 @@ ENV.each { |k, v| env(k, v) }
 every 5.minutes do
   rake "stream_snapshots:save"
 end
+
+every 1.day, at: '23:59' do
+  rake "analayz:fetch_followers"
+end
