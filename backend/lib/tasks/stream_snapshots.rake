@@ -4,8 +4,6 @@ namespace :stream_snapshots do
     client = TwitchApiService.new
     streams = client.fetch_top_streams_with_streamer
 
-    StreamSnapshot.delete_all
-
     streams[:streams].each do |stream|
       StreamSnapshot.create!(
         user_name: stream[:user],

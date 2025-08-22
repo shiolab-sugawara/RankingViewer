@@ -15,9 +15,14 @@ namespace :stream_histories do
         user_name: stream.user_name,
         viewer_count: stream.viewer_count,
         thumbnail_url: stream.thumbnail_url,
-        recorded_at: target_date
+        recorded_at: target_date,
+        started_at: stream.started_at,
+        tags: stream.tags
       )
     end
+
+    StreamSnapshot.delete_all
+    StreamHistory.where(recorded_at: 7.days.ago.all_day).delete_all
 
     puts "history保存"
   end

@@ -66,7 +66,6 @@ export default function RankingRoute() {
 
   const isFavorite = (user: string) => favorites.includes(user);
 
-  const goNextDay = () => setDaysAgo((prev) => Math.max(0, prev - 1));
   const goToday = () => setDaysAgo(0);
 
   const styles = darkMode ? darkStyles : lightStyles;
@@ -81,15 +80,22 @@ export default function RankingRoute() {
           style={{ ...styles.button, opacity: daysAgo === 0 ? 0.5 : 1 }}
           disabled={daysAgo === 0}
         >
-          今日に戻る
+          今日
         </button>
-        <button
-          onClick={goNextDay}
-          style={{ ...styles.button, opacity: daysAgo === 0 ? 0.5 : 1 }}
-          disabled={daysAgo === 0}
-        >
-          次の日 →
-        </button>
+
+        {[1, 2, 3, 4, 5, 6, 7].map((day) => (
+          <button
+            key={day}
+            onClick={() => setDaysAgo(day)}
+            style={{
+              ...styles.button,
+              opacity: daysAgo === day ? 0.5 : 1,
+            }}
+            disabled={daysAgo === day}
+          >
+            {day}日前
+          </button>
+        ))}
       </div>
 
       {loading ? (
@@ -107,15 +113,24 @@ export default function RankingRoute() {
                 <h2 style={styles.cardTitle}>
                   #{index + 1} {stream.user}
                 </h2>
-                <p style={styles.text}><strong>視聴者数:</strong> {stream.viewers}</p>
-                <p style={styles.text}><strong>配信時間:</strong> {stream.duration || "不明"}</p>
-                <p style={styles.text}><strong>タグ:</strong> {stream.tags.length > 0 ? stream.tags.join(", ") : "なし"}</p>
+                <p style={styles.text}>
+                  <strong>視聴者数:</strong> {stream.viewers}
+                </p>
+                <p style={styles.text}>
+                  <strong>配信時間:</strong> {stream.duration || "不明"}
+                </p>
+                <p style={styles.text}>
+                  <strong>タグ:</strong>{" "}
+                  {stream.tags.length > 0 ? stream.tags.join(", ") : "なし"}
+                </p>
 
                 <button
                   onClick={() => toggleFavorite(stream.user)}
                   style={{
                     ...styles.button,
-                    backgroundColor: isFavorite(stream.user) ? "#ffc107" : "#6c757d",
+                    backgroundColor: isFavorite(stream.user)
+                      ? "#ffc107"
+                      : "#6c757d",
                     marginTop: "0.5rem",
                   }}
                 >
@@ -147,9 +162,10 @@ const lightStyles: { [key: string]: React.CSSProperties } = {
   buttonGroup: {
     marginBottom: "2rem",
     display: "flex",
-    gap: "1rem",
+    gap: "0.5rem",
     justifyContent: "center",
-    flexWrap: "wrap",
+    flexWrap: "nowrap",
+    overflowX: "auto",
   },
   button: {
     padding: "0.5rem 1rem",
@@ -159,6 +175,7 @@ const lightStyles: { [key: string]: React.CSSProperties } = {
     backgroundColor: "#007bff",
     color: "#fff",
     cursor: "pointer",
+    whiteSpace: "nowrap",
   },
   cardGrid: {
     display: "flex",
