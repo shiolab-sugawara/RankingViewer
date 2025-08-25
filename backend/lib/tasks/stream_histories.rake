@@ -15,9 +15,7 @@ namespace :stream_histories do
         user_name: stream.user_name,
         viewer_count: stream.viewer_count,
         thumbnail_url: stream.thumbnail_url,
-        recorded_at: target_date,
-        started_at: stream.started_at,
-        tags: stream.tags
+        recorded_at: target_date
       )
     end
 
