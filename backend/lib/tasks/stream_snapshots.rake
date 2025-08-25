@@ -14,6 +14,6 @@ namespace :stream_snapshots do
         tags: stream[:tags]
       )
     end
-    puts "保存"
+    puts "snapshot保存"
   end
 end
