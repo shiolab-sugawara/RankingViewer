@@ -9,7 +9,7 @@ class TwitchApiService
   def fetch_top_streams_with_streamer
     query = {
       language: "ja",
-      first: "21"
+      first: "20"
     }
 
     response = self.class.get("/streams", query: query).parsed_response
