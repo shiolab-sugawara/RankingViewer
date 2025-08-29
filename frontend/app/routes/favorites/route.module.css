@@ -1,0 +1,78 @@
+:root {
+  --bg: #f8f9fa;
+  --fg: #212529;
+  --card-bg: #fff;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --btn-bg: #007bff;
+  --btn-fg: #fff;
+  --btn-secondary-bg: #6c757d;
+}
+
+.container {
+  padding: 2rem;
+  background: var(--bg);
+  min-height: 100vh;
+  font-family: sans-serif;
+  color: var(--fg);
+}
+
+.heading {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.text {
+  font-size: 1.1rem;
+  color: var(--fg);
+  text-align: center;
+}
+
+.cardGrid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: var(--shadow);
+  max-width: 500px;
+  width: 100%;
+}
+
+.cardTitle {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--btn-bg);
+  color: var(--btn-fg);
+  cursor: pointer;
+}
+
+.secondaryButton {
+  background-color: var(--btn-secondary-bg);
+  margin-top: 0.5rem;
+}
+
+/* ダークモード（コンテナに .dark が付与されたとき） */
+.dark {
+  --bg: #121212;
+  --fg: #f1f1f1;
+  --card-bg: #1e1e1e;
+  --shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+  --btn-bg: #339af0;
+  --btn-fg: #fff;
+  --btn-secondary-bg: #6c757d; /* そのままでもOK */
+}

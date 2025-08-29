@@ -1,0 +1,87 @@
+/* ← ここに :root は置かない。全体テーマはグローバルで決める */
+
+.container {
+  padding: 2rem;
+  background: var(--bg);
+  min-height: 100vh;
+  font-family: sans-serif;
+  color: var(--fg);
+}
+
+.heading {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.buttonGroup {
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--btn-bg);
+  color: var(--btn-fg);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cardGrid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: var(--shadow);
+  max-width: 700px;
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.cardTitle {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.thumbnail {
+  width: 280px;
+  height: 158px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.text {
+  color: var(--fg);
+  margin-bottom: 0.5rem;
+}
+
+/* お気に入りボタンの派生 */
+.favoriteButton { margin-top: 0.5rem; }
+.notFav { background-color: var(--btn-muted-bg); }
+.fav { background-color: var(--btn-fav-bg); color: #000; }
+
+/* ← .dark ブロックも不要（ダーク固定なので） */

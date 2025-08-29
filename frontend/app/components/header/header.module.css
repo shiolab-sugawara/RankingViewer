@@ -1,0 +1,62 @@
+:root {
+  /* dark (固定) */
+  --bg: #121212;
+  --fg: #f1f1f1;
+  --card-bg: #1e1e1e;
+  --border: rgba(255,255,255,0.08);
+  --shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+
+  --link: #cbd5e1;
+  --link-active: #ffffff;
+
+  --btn-bg: #339af0;
+  --btn-fg: #ffffff;
+  --btn-muted-bg: #6c757d;
+  --btn-fav-bg: #ffc107;
+}
+
+html { color-scheme: dark; height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); height: 100%; }
+
+.header {
+  position: static;              /* 流れるヘッダー */
+  z-index: 50;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: saturate(180%) blur(8px);
+
+  /* 高さは固定しない。欲しければ上下パディングで調整 */
+  padding-block: 0.75rem;        /* ここを大きくすれば“デカい”ヘッダーに */
+  margin-bottom: 0;              /* 間を空けたいなら 0.5rem などに */
+}
+
+.inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.brand { font-weight: 800; letter-spacing: .2px; color: var(--fg); font-size: 1.15rem; }
+
+.subnav { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+
+.link { padding: 0.4rem 0.7rem; text-decoration: none; color: var(--link); border-radius: 8px; transition: background 0.2s ease, color 0.2s ease; }
+.link:hover { background: rgba(255,255,255,0.06); }
+.active { color: var(--link-active); background: rgba(255,255,255,0.08); font-weight: 600; }
+
+@media (max-width: 420px) { .link { padding: 0.45rem 0.6rem; } }
+
+/* コンテンツ側：ヘッダー高さに依存しない */
+.container {
+  padding: 1rem 2rem 2rem;  /* ← 好みで調整。完全に詰めたいなら 0 2rem 2rem */
+  background: var(--bg);
+  min-height: 100vh;
+  font-family: sans-serif;
+  color: var(--fg);
+}
+
+.heading { margin-top: 0; }
