@@ -1,0 +1,2 @@
+class StreamDailySummary < ApplicationRecord
+end

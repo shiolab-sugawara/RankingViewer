@@ -4,6 +4,8 @@ namespace :stream_snapshots do
     client = TwitchApiService.new
     streams = client.fetch_top_streams_with_streamer
 
+    StreamSnapshot.delete_all
+
     streams[:streams].each do |stream|
       StreamSnapshot.create!(
         user_name: stream[:user],
@@ -14,6 +16,18 @@ namespace :stream_snapshots do
         tags: stream[:tags]
       )
     end
+
+    streams[:streams].each do |stream|
+      StreamDailySummary.create!(
+        user_name: stream[:user],
+        viewer_count: stream[:viewers],
+        thumbnail_url: stream[:thumbnail],
+        recorded_at: Time.current,
+        started_at: stream[:started_at],
+        tags: stream[:tags]
+      )
+    end
+
     puts "snapshot保存"
   end
 end

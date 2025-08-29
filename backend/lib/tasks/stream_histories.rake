@@ -3,7 +3,7 @@ namespace :stream_histories do
   task save: :environment do
     target_date = Date.today
 
-    top_streams = StreamSnapshot
+    top_streams = StreamDailySummary
       .where(recorded_at: target_date.all_day)
       .select("user_name, thumbnail_url, MAX(viewer_count) AS viewer_count")
       .group(:user_name, :thumbnail_url)
@@ -19,7 +19,7 @@ namespace :stream_histories do
       )
     end
 
-    StreamSnapshot.delete_all
+    StreamDailySummary.delete_all
     StreamHistory.where(recorded_at: 7.days.ago.all_day).delete_all
 
     puts "history保存"

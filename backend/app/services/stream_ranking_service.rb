@@ -4,12 +4,7 @@ class StreamRankingService
 
     streams =
     if target_date == Date.current
-      snapshots = StreamSnapshot
-                    .where(recorded_at: target_date.all_day)
-                    .order(created_at: :desc)
-                    .limit(20)
-                    .to_a
-      snapshots.sort_by(&:created_at)
+      snapshots = StreamSnapshot.where(recorded_at: target_date.all_day)
     else
       StreamHistory
         .where(recorded_at: target_date.all_day)
@@ -17,15 +12,15 @@ class StreamRankingService
         .limit(20)
     end
 
-  streams.map do |s|
-    {
-      user: s.user_name,
-      viewers: s.viewer_count,
-      thumbnail: s.thumbnail_url,
-      duration: format_duration(s),
-      tags: s.tags || []
-    }
-end
+    streams.map do |s|
+        {
+          user: s.user_name,
+          viewers: s.viewer_count,
+          thumbnail: s.thumbnail_url,
+          duration: format_duration(s),
+          tags: s.tags || []
+        }
+    end
   end
 
   def self.format_duration(stream)
