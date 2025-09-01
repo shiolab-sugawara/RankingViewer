@@ -1,0 +1,150 @@
+.ap-container,
+.rk-container {
+  max-width: 1100px;
+  margin: 48px auto;
+  padding: 0 20px 40px;
+  color: var(--rk-text);
+  background:
+    radial-gradient(1200px 800px at 10% -10%, color-mix(in lab, var(--rk-accent) 35%, transparent 65%), transparent 60%),
+    radial-gradient(1000px 700px at 120% 10%, rgba(34,197,94,0.10), transparent 55%),
+    var(--rk-bg);
+  background-attachment: fixed;
+}
+
+.ap-title,
+.rk-title {
+  font-size: clamp(24px, 2.6vw, 34px);
+  font-weight: 800;
+  letter-spacing: .2px;
+  margin: 0 0 24px;
+  line-height: 1.2;
+  color: var(--rk-text);
+  text-shadow: 0 1px 0 rgba(0,0,0,.25);
+}
+
+.ap-card,
+.rk-card {
+  background: linear-gradient(
+    180deg,
+    var(--rk-surface),
+    color-mix(in lab, var(--rk-surface) 88%, #000 12%)
+  );
+  border: 1px solid var(--rk-border);
+  border-radius: var(--rk-radius);
+  padding: 18px 18px 8px;
+  box-shadow: var(--rk-shadow);
+  backdrop-filter: saturate(120%) blur(6px);
+  margin-bottom: var(--rk-grid-gap);
+  transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+.ap-card:hover,
+.rk-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.28);
+  border-color: color-mix(in lab, var(--rk-border) 70%, var(--rk-accent) 30%);
+}
+
+.ap-card__title,
+.rk-card__title {
+  font-size: clamp(16px, 1.6vw, 20px);
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: var(--rk-text);
+}
+
+.ap-chart,
+.rk-chart {
+  width: 100%;
+  height: 320px;
+  padding: 6px 4px 10px;
+  overflow: hidden;
+}
+
+.ap-loading,
+.ap-error,
+.rk-loading,
+.rk-error {
+  max-width: 960px;
+  margin: 80px auto;
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-size: 15px;
+  background: var(--rk-surface);
+  border: 1px dashed var(--rk-border);
+  color: var(--rk-muted);
+  text-align: center;
+}
+
+.ap-loading::after,
+.rk-loading::after {
+  content: "";
+  display: block;
+  height: 4px;
+  width: 160px;
+  margin: 12px auto 0;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--rk-accent),
+    color-mix(in lab, var(--rk-accent) 40%, #22c55e 60%)
+  );
+  animation: rk-shimmer 1.2s infinite linear;
+}
+
+@keyframes rk-shimmer {
+  0% { transform: translateX(-30%); opacity: .6; }
+  50% { opacity: 1; }
+  100% { transform: translateX(30%); opacity: .6; }
+}
+
+.recharts-default-tooltip {
+  background: color-mix(in lab, var(--rk-surface) 88%, #000 12%) !important;
+  border: 1px solid var(--rk-border) !important;
+  border-radius: 10px !important;
+  box-shadow: var(--rk-shadow) !important;
+  color: var(--rk-text) !important;
+  padding: 8px 10px !important;
+  backdrop-filter: blur(6px) saturate(120%);
+}
+
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke-opacity: .35;
+}
+
+.recharts-xAxis .recharts-cartesian-axis-tick-value,
+.recharts-yAxis .recharts-cartesian-axis-tick-value {
+  fill: var(--rk-muted);
+  font-size: 12px;
+}
+
+.chartjs-external-tooltip {
+  position: absolute;
+  pointer-events: none;
+  transform: translate(-50%, calc(-100% - 8px));
+  background: color-mix(in lab, var(--rk-surface) 88%, #000 12%);
+  border: 1px solid var(--rk-border);
+  border-radius: 10px;
+  box-shadow: var(--rk-shadow);
+  color: var(--rk-text);
+  padding: 8px 10px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 30;
+}
+
+@media (max-width: 640px) {
+  .ap-container,
+  .rk-container {
+    margin-top: 28px;
+  }
+  .ap-card,
+  .rk-card {
+    padding: 14px 14px 6px;
+  }
+  .ap-chart,
+  .rk-chart {
+    height: 280px;
+  }
+}
