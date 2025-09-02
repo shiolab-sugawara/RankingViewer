@@ -13,6 +13,7 @@
   --btn-fg: #ffffff;
   --btn-muted-bg: #6c757d;
   --btn-fav-bg: #ffc107;
+  --color-gray-950: transparent;
 }
 
 html { color-scheme: dark; height: 100%; }
