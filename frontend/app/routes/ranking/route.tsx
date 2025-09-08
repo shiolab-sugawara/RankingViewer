@@ -10,6 +10,16 @@ type StreamRanking = {
   tags: string[];
 };
 
+type FavoriteItem = StreamRanking & {
+  date: string;
+  rank: number;
+};
+
+type FavoriteMap = Record<string, FavoriteItem>;
+
+const STORAGE_V1 = "favoriteStreamers";
+const STORAGE_V2 = "favoriteStreamersV2";
+
 export const clientLoader = () => null;
 
 export default function RankingRoute() {
@@ -17,15 +27,45 @@ export default function RankingRoute() {
   const [ranking, setRanking] = useState<StreamRanking[]>([]);
   const [loading, setLoading] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const [favorites, setFavorites] = useState<FavoriteMap>({});
 
   const date = subDays(new Date(), daysAgo);
   const dateStr = format(date, "yyyy-MM-dd");
 
   useEffect(() => {
-    const stored = localStorage.getItem("favoriteStreamers");
-    if (stored) setFavorites(JSON.parse(stored));
+    const v2raw = localStorage.getItem(STORAGE_V2);
+    if (v2raw) {
+      try {
+        setFavorites(JSON.parse(v2raw));
+        return;
+      } catch {}
+    }
+
+    const v1raw = localStorage.getItem(STORAGE_V1);
+    if (v1raw) {
+      try {
+        const arr: string[] = JSON.parse(v1raw);
+        const migrated: FavoriteMap = {};
+        arr.forEach((name) => {
+          migrated[name] = {
+            user: name,
+            viewers: 0,
+            thumbnail: "",
+            duration: null,
+            tags: [],
+            date: "",
+            rank: 0,
+          };
+        });
+        setFavorites(migrated);
+        localStorage.setItem(STORAGE_V2, JSON.stringify(migrated));
+      } catch {}
+    }
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_V2, JSON.stringify(favorites));
+  }, [favorites]);
 
   useEffect(() => {
     const isDark =
@@ -54,15 +94,24 @@ export default function RankingRoute() {
     fetchRanking();
   }, [dateStr]);
 
-  const toggleFavorite = (user: string) => {
-    const updated = favorites.includes(user)
-      ? favorites.filter((name) => name !== user)
-      : [...favorites, user];
-    setFavorites(updated);
-    localStorage.setItem("favoriteStreamers", JSON.stringify(updated));
+  const toggleFavorite = (stream: StreamRanking, rankIndex: number) => {
+    setFavorites((prev) => {
+      const exists = !!prev[stream.user];
+      if (exists) {
+        const { [stream.user]: _, ...rest } = prev;
+        return rest;
+      } else {
+        const item: FavoriteItem = {
+          ...stream,
+          date: dateStr,
+          rank: rankIndex + 1,
+        };
+        return { ...prev, [stream.user]: item };
+      }
+    });
   };
 
-  const isFavorite = (user: string) => favorites.includes(user);
+  const isFavorite = (user: string) => !!favorites[user];
   const goToday = () => setDaysAgo(0);
 
   return (
@@ -95,7 +144,7 @@ export default function RankingRoute() {
       ) : (
         <div className={styles.cardGrid}>
           {ranking.map((stream, index) => (
-            <div key={index} className={styles.card}>
+            <div key={`${stream.user}-${index}`} className={styles.card}>
               <img
                 src={stream.thumbnail}
                 alt={`${stream.user} thumbnail`}
@@ -107,7 +156,7 @@ export default function RankingRoute() {
                 </h2>
 
                 <p className={styles.text}>
-                  <strong>視聴者数:</strong> {stream.viewers}
+                  <strong>視聴者数:</strong> {stream.viewers.toLocaleString()}
                 </p>
                 <p className={styles.text}>
                   <strong>配信時間:</strong> {stream.duration || "不明"}
@@ -118,7 +167,7 @@ export default function RankingRoute() {
                 </p>
 
                 <button
-                  onClick={() => toggleFavorite(stream.user)}
+                  onClick={() => toggleFavorite(stream, index)}
                   className={`${styles.button} ${styles.favoriteButton} ${
                     isFavorite(stream.user) ? styles.fav : styles.notFav
                   }`}

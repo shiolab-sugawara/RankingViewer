@@ -1,57 +1,118 @@
+:root {
+  --bg: #0f0f10;
+  --fg: #e9e9ee;
+  --muted: #b5b5bf;
+  --card-bg: #1b1c20;
+  --shadow: 0 8px 24px rgba(0,0,0,.35);
+  --btn-bg: #2b2d33;
+  --btn-fg: #ffffff;
+  --btn-secondary-bg: #3a3d46;
+  --btn-secondary-hover: #4a4e5a;
+  --ring: 0 0 0 2px rgba(255,255,255,.08) inset;
+}
+
 .container {
   padding: 2rem;
   background: var(--bg);
   min-height: 100vh;
-  font-family: sans-serif;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
   color: var(--fg);
 }
 
 .heading {
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
-  font-weight: bold;
+  font-size: clamp(1.6rem, 2vw + 1rem, 2.2rem);
+  margin-bottom: 1.75rem;
+  font-weight: 800;
   text-align: center;
+  letter-spacing: .02em;
 }
 
 .text {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   color: var(--fg);
   text-align: center;
 }
 
 .cardGrid {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  justify-items: center;
 }
 
 .card {
   background: var(--card-bg);
-  border-radius: 8px;
+  border-radius: 14px;
   padding: 1rem;
   box-shadow: var(--shadow);
-  max-width: 500px;
+  width: min(720px, 100%);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.9rem;
+  align-items: start;
+}
+
+@media (min-width: 640px) {
+  .card {
+    grid-template-columns: 220px 1fr;
+    padding: 1.1rem 1.2rem;
+  }
+}
+
+.thumbnail,
+.card img {
   width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 10px;
+  background: #0a0a0a;
+  box-shadow: var(--ring);
 }
 
 .cardTitle {
-  font-size: 1.3rem;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0 0 .4rem 0;
+  line-height: 1.2;
+}
+
+.subtle {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: .95rem;
+  margin-left: .4rem;
+}
+
+.card .text {
+  text-align: left;
+  margin: .2rem 0;
+  line-height: 1.5;
 }
 
 .button {
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
+  padding: .55rem 1rem;
+  font-size: .95rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
   background-color: var(--btn-bg);
   color: var(--btn-fg);
   cursor: pointer;
+  transition: transform .08s ease, background-color .15s ease, opacity .15s ease;
+  user-select: none;
 }
+
+.button:hover { opacity: .95; }
+.button:active { transform: translateY(1px); }
 
 .secondaryButton {
   background-color: var(--btn-secondary-bg);
-  margin-top: 0.5rem;
+  margin-top: .6rem;
+  align-self: end;
+  justify-self: end;
 }
+.secondaryButton:hover {
+  background-color: var(--btn-secondary-hover);
+}
+
+.card > div > p + p { margin-top: .25rem; }
