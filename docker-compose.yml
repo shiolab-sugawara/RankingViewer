@@ -20,27 +20,31 @@ services:
       - "3000"
     restart: always
 
-  # front サービスは「ビルド用」として使い切ったら不要
-  # 本番では nginx が dist を含むイメージを持つべきなので削除
-  # front:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   depends_on:
-  #     - back
-  #   restart: no
-
+  # 本番は nginx がフロントを配信（./frontend の Dockerfile は nginx ベース想定）
   nginx:
     build:
-      context: ./frontend  # frontend の Dockerfile で nginx 化済みイメージにする
+      context: ./frontend    # dist を含む nginx イメージをここで作る想定
       dockerfile: Dockerfile
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - back
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - certs:/etc/letsencrypt                     # ← 証明書置き場
+      - certbot-www:/var/www/certbot               # ← ACME http-01 用webroot
     restart: always
+
+  # 証明書の取得/更新に使う（常駐させない）
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - certs:/etc/letsencrypt
+      - certbot-www:/var/www/certbot
+    entrypoint: /bin/sh
 
 volumes:
   mysql_data:
+  certs:
+  certbot-www:
