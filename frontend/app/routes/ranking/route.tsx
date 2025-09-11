@@ -32,6 +32,9 @@ export default function RankingRoute() {
   const date = subDays(new Date(), daysAgo);
   const dateStr = format(date, "yyyy-MM-dd");
 
+  const twitchUrl = (user: string) =>
+    `https://www.twitch.tv/${encodeURIComponent(user.toLowerCase())}`;
+
   useEffect(() => {
     const v2raw = localStorage.getItem(STORAGE_V2);
     if (v2raw) {
@@ -131,7 +134,9 @@ export default function RankingRoute() {
           <button
             key={day}
             onClick={() => setDaysAgo(day)}
-            className={`${styles.button} ${daysAgo === day ? styles.disabled : ""}`}
+            className={`${styles.button} ${
+              daysAgo === day ? styles.disabled : ""
+            }`}
             disabled={daysAgo === day}
           >
             {day}日前
@@ -145,14 +150,30 @@ export default function RankingRoute() {
         <div className={styles.cardGrid}>
           {ranking.map((stream, index) => (
             <div key={`${stream.user}-${index}`} className={styles.card}>
-              <img
-                src={stream.thumbnail}
-                alt={`${stream.user} thumbnail`}
-                className={styles.thumbnail}
-              />
+              <a
+                href={twitchUrl(stream.user)}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${stream.user} を視聴する (新しいタブ)`}
+              >
+                <img
+                  src={stream.thumbnail}
+                  alt={`${stream.user} thumbnail`}
+                  className={styles.thumbnail}
+                />
+              </a>
+
               <div>
                 <h2 className={styles.cardTitle}>
-                  #{index + 1} {stream.user}
+                  <a
+                    href={twitchUrl(stream.user)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.link}
+                    aria-label={`${stream.user} を視聴する (新しいタブ)`}
+                  >
+                    #{index + 1} {stream.user}
+                  </a>
                 </h2>
 
                 <p className={styles.text}>
