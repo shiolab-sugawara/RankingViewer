@@ -35,19 +35,36 @@ class TwitchApiService
     q[:language] = language if language
 
     response = self.class.get("/streams", query: q).parsed_response
-    streams = response["data"]
+    raw_streams = response["data"]
 
-    streams.map do |stream|
+    streams = raw_streams.map do |stream|
       {
-        user: stream["user_name"],
-        viewers: stream["viewer_count"],
-        thumbnail: stream["thumbnail_url"].gsub("{width}", "320").gsub("{height}", "180"),
-        started_at: stream["started_at"],
-        tags: stream["tags"],
-        game_id: stream["game_id"],
-        game_name: stream["game_name"]
+        user:        stream["user_name"],
+        viewers:     stream["viewer_count"],
+        thumbnail:   stream["thumbnail_url"].gsub("{width}", "320").gsub("{height}", "180"),
+        started_at:  stream["started_at"],
+        tags:        stream["tags"],
+        game_id:     stream["game_id"],
+        game_name:   stream["game_name"]
       }
     end
+
+    GameStreamSnapshot.delete_all
+
+    streams.each do |s|
+      ::GameStreamSnapshot.create!(
+        user_name:     s[:user],
+        viewer_count:  s[:viewers],
+        thumbnail_url: s[:thumbnail],
+        recorded_at:   Time.current,
+        started_at:    s[:started_at],
+        tags:          s[:tags],
+        game_id:       s[:game_id],
+        game_name:     s[:game_name]
+      )
+    end
+
+    { streams: streams }
   end
 
   def register_eventsub(user_id)

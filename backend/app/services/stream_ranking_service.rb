@@ -20,8 +20,10 @@ class StreamRankingService
     return [] unless game_id.present?
 
     client = TwitchApiService.new
+    client.fetch_streams_by_game(game_id: game_id)
+    scope = GameStreamSnapshot.limit(20)
+    streams = scope.order(viewer_count: :desc)
 
-    streams = client.fetch_streams_by_game(game_id: game_id)
     normalize_from_twitch(streams)
   end
 

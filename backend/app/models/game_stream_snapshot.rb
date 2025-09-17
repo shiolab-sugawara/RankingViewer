@@ -1,0 +1,2 @@
+class GameStreamSnapshot < ApplicationRecord
+end
