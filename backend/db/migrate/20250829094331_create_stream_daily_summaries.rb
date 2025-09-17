@@ -1,6 +1,6 @@
 class CreateStreamDailySummaries < ActiveRecord::Migration[7.1]
   def change
-    create_table :stream_daily_summaries do |t|
+    create_table :stream_daily_summaries, if_not_exists: true do |t|
       t.string :user_name
       t.integer :viewer_count
       t.string :thumbnail_url

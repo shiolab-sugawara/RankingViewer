@@ -8,6 +8,8 @@ type StreamRanking = {
   thumbnail: string;
   duration: string | null;
   tags: string[];
+  gameId?: string;
+  gameName?: string;
 };
 
 type FavoriteItem = StreamRanking & {
@@ -22,12 +24,26 @@ const STORAGE_V2 = "favoriteStreamersV2";
 
 export const clientLoader = () => null;
 
+// 受け取るJSONのsnake/camel差を吸収
+const normalizeRow = (row: any): StreamRanking => ({
+  user: row.user,
+  viewers: Number(row.viewers) || 0,
+  thumbnail: row.thumbnail || "",
+  duration: row.duration ?? null,
+  tags: Array.isArray(row.tags) ? row.tags : [],
+  gameId: row.gameId ?? row.game_id ?? undefined,
+  gameName: row.gameName ?? row.game_name ?? undefined,
+});
+
 export default function RankingRoute() {
   const [daysAgo, setDaysAgo] = useState(0);
   const [ranking, setRanking] = useState<StreamRanking[]>([]);
   const [loading, setLoading] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [favorites, setFavorites] = useState<FavoriteMap>({});
+
+  const [selectedGameId, setSelectedGameId] = useState<string | null>(null);
+  const [selectedGameName, setSelectedGameName] = useState<string | null>(null);
 
   const date = subDays(new Date(), daysAgo);
   const dateStr = format(date, "yyyy-MM-dd");
@@ -71,31 +87,51 @@ export default function RankingRoute() {
   }, [favorites]);
 
   useEffect(() => {
-    const isDark =
-      window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setDarkMode(isDark);
+    const mql = window.matchMedia?.("(prefers-color-scheme: dark)");
+    const apply = () => setDarkMode(!!mql?.matches);
+    apply();
+    mql?.addEventListener("change", apply);
+    return () => mql?.removeEventListener("change", apply);
   }, []);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchRanking = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/ranking?date=${dateStr}`);
+        const params = new URLSearchParams();
+        if (selectedGameId) {
+          params.set("game_id", selectedGameId);
+        } else {
+          params.set("date", dateStr);
+        }
+
+        const res = await fetch(`/api/ranking?${params.toString()}`, {
+          signal: controller.signal,
+        });
         if (!res.ok) {
           const errorText = await res.text();
           throw new Error(`Failed to fetch ranking: ${errorText}`);
         }
-        const data = await res.json();
-        setRanking(data);
-      } catch (err) {
-        console.error(err);
+        const raw = await res.json();
+        const normalized: StreamRanking[] = Array.isArray(raw)
+          ? raw.map(normalizeRow)
+          : [];
+        setRanking(normalized);
+      } catch (err: any) {
+        if (err.name !== "AbortError") {
+          console.error(err);
+          setRanking([]);
+        }
       } finally {
         setLoading(false);
       }
     };
+
     fetchRanking();
-  }, [dateStr]);
+    return () => controller.abort();
+  }, [dateStr, selectedGameId]);
 
   const toggleFavorite = (stream: StreamRanking, rankIndex: number) => {
     setFavorites((prev) => {
@@ -117,9 +153,40 @@ export default function RankingRoute() {
   const isFavorite = (user: string) => !!favorites[user];
   const goToday = () => setDaysAgo(0);
 
+  const clearGameFilter = () => {
+    setSelectedGameId(null);
+    setSelectedGameName(null);
+  };
+
+  const handleClickCategory = (id?: string, name?: string) => {
+    if (!id) return;
+    if (selectedGameId === id) {
+      clearGameFilter();
+    } else {
+      setSelectedGameId(id);
+      setSelectedGameName(name ?? null);
+    }
+  };
+
   return (
     <div className={`${styles.container} ${darkMode ? styles.dark : ""}`}>
-      <h1 className={styles.heading}>{dateStr} の配信ランキング</h1>
+      <h1 className={styles.heading}>
+        {dateStr} の配信ランキング
+        {selectedGameId && (
+          <span className={styles.filterBadge}>
+            カテゴリ: {selectedGameName || selectedGameId}
+            <button
+              type="button"
+              onClick={clearGameFilter}
+              className={styles.clearFilterButton}
+              aria-label="カテゴリ絞り込みを解除"
+              title="カテゴリ絞り込みを解除"
+            >
+              ×
+            </button>
+          </span>
+        )}
+      </h1>
 
       <div className={styles.buttonGroup}>
         <button
@@ -149,7 +216,7 @@ export default function RankingRoute() {
       ) : (
         <div className={styles.cardGrid}>
           {ranking.map((stream, index) => (
-            <div key={`${stream.user}-${index}`} className={styles.card}>
+            <div key={stream.user} className={styles.card}>
               <a
                 href={twitchUrl(stream.user)}
                 target="_blank"
@@ -160,6 +227,11 @@ export default function RankingRoute() {
                   src={stream.thumbnail}
                   alt={`${stream.user} thumbnail`}
                   className={styles.thumbnail}
+                  loading="lazy"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src =
+                      "/placeholder-thumb.png";
+                  }}
                 />
               </a>
 
@@ -177,14 +249,33 @@ export default function RankingRoute() {
                 </h2>
 
                 <p className={styles.text}>
-                  <strong>視聴者数:</strong> {stream.viewers.toLocaleString()}
+                  <strong>視聴者数:</strong>{" "}
+                  {Number(stream.viewers).toLocaleString()}
                 </p>
                 <p className={styles.text}>
                   <strong>配信時間:</strong> {stream.duration || "不明"}
                 </p>
                 <p className={styles.text}>
                   <strong>タグ:</strong>{" "}
-                  {stream.tags.length > 0 ? stream.tags.join(", ") : "なし"}
+                  {stream.tags?.length > 0 ? stream.tags.join(", ") : "なし"}
+                </p>
+                <p className={styles.text}>
+                  <strong>カテゴリ:</strong>{" "}
+                  {stream.gameName && stream.gameName.trim() !== "" ? (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleClickCategory(stream.gameId, stream.gameName)
+                      }
+                      className={`${styles.categoryPill} ${styles.categoryButton}`}
+                      title={stream.gameId || ""}
+                      aria-pressed={selectedGameId === stream.gameId}
+                    >
+                      {stream.gameName}
+                    </button>
+                  ) : (
+                    "未設定"
+                  )}
                 </p>
 
                 <button
@@ -192,6 +283,7 @@ export default function RankingRoute() {
                   className={`${styles.button} ${styles.favoriteButton} ${
                     isFavorite(stream.user) ? styles.fav : styles.notFav
                   }`}
+                  aria-pressed={isFavorite(stream.user)}
                 >
                   {isFavorite(stream.user) ? "★ 登録済み" : "☆ お気に入り"}
                 </button>

@@ -22,10 +22,32 @@ class TwitchApiService
           viewers: stream["viewer_count"],
           thumbnail: stream["thumbnail_url"].gsub("{width}", "320").gsub("{height}", "180"),
           started_at: stream["started_at"],
-          tags: stream["tags"]
+          tags: stream["tags"],
+          game_id: stream["game_id"],
+          game_name: stream["game_name"]
         }
       end
     }
+  end
+
+  def fetch_streams_by_game(game_id:, limit: 20, language: "ja")
+    q = { game_id:, first: limit }
+    q[:language] = language if language
+
+    response = self.class.get("/streams", query: q).parsed_response
+    streams = response["data"]
+
+    streams.map do |stream|
+      {
+        user: stream["user_name"],
+        viewers: stream["viewer_count"],
+        thumbnail: stream["thumbnail_url"].gsub("{width}", "320").gsub("{height}", "180"),
+        started_at: stream["started_at"],
+        tags: stream["tags"],
+        game_id: stream["game_id"],
+        game_name: stream["game_name"]
+      }
+    end
   end
 
   def register_eventsub(user_id)

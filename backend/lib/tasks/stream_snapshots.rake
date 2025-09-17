@@ -13,7 +13,9 @@ namespace :stream_snapshots do
         thumbnail_url: stream[:thumbnail],
         recorded_at: Time.current,
         started_at: stream[:started_at],
-        tags: stream[:tags]
+        tags: stream[:tags],
+        game_id: stream[:game_id],
+        game_name: stream[:game_name]
       )
     end
 
